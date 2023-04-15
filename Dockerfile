@@ -7,12 +7,13 @@ FROM python:3.11.1-slim
 WORKDIR /app
 
 # set env variables
-ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-# install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
+
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python3 - && \
+    /root/.local/bin/poetry config virtualenvs.create false && \
+    /root/.local/bin/poetry install --no-dev --no-root

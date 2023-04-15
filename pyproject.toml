@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "raspberry-temperature-dashboard"
+version = "0.1.0"
+description = ""
+authors = ["solomon <hansolomon168@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "raspberry_temperature_dashboard"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+pydantic = "^1.10"
+uvicorn = "^0.21.1"
+psycopg2-binary = "^2.9.5"
+SQLAlchemy = "^1.4.41"
+sqlmodel = "^0.0.8"
+asyncpg = "^0.27.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

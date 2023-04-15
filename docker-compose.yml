@@ -3,7 +3,7 @@ version: "3.7"
 services:
   web:
     build: .
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn app.main:app --host 0.0.0.0'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn app.main:app --host 0.0.0.0 --reload'
     volumes:
       - .:/app
     ports:
@@ -12,6 +12,7 @@ services:
       - DATABASE_URL=postgresql://super_user:12345@db:5432/temperature_dashboard
     depends_on:
       - db
+    restart: always
   db:
     image: postgres:15-alpine
     volumes:

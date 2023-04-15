@@ -1,8 +1,10 @@
 from typing import Union
-from fastapi import FastAPI
-from app.db import create_db_and_tables, Temperature, engine
+from fastapi import FastAPI, Depends
 from sqlmodel import Session, select
-from json import JSONEncoder
+
+from app.db import create_db_and_tables, get_session
+from app.models.temperature import Temperature
+
 
 app = FastAPI()
 
@@ -18,19 +20,15 @@ def read_root():
 
 
 @app.get("/temperature/")
-def select_temperature():
-    with Session(engine) as session:
-        statement = select(Temperature)
-        results = session.exec(statement)
-        for temperature in results:
-            return temperature
+def select_temperature(session: Session = Depends(get_session)):
+    statement = select(Temperature)
+    results = session.exec(statement).all()
+    return results
 
 
-@app.post("/temperature/")
-def create_temperature(temperature: Temperature):
-    temperature_to_create = Temperature.from_orm(temperature)
-    with Session(engine) as session:
-        session.add(temperature_to_create)
-        session.commit()
-        session.refresh(temperature_to_create)
-        return temperature_to_create
+@app.post("/temperature/", response_model=Temperature)
+def create_temperature(temperature: Temperature, session=Depends(get_session)):
+    session.add(temperature)
+    session.commit()
+    session.refresh(temperature)
+    return temperature
