@@ -1,12 +1,27 @@
 from typing import Union
 from fastapi import FastAPI, Depends
 from sqlmodel import Session, select
+from datetime import datetime, timedelta
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import create_db_and_tables, get_session
 from app.models.temperature import Temperature
 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
@@ -21,6 +36,9 @@ def read_root():
 
 @app.get("/temperature/")
 def select_temperature(session: Session = Depends(get_session)):
+    now = datetime.now()
+    one_hour_ago = now - timedelta(hours=1)
+
     statement = select(Temperature)
     results = session.exec(statement).all()
     return results
