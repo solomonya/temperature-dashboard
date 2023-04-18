@@ -39,7 +39,7 @@ def select_temperature(session: Session = Depends(get_session)):
     now = datetime.now()
     one_hour_ago = now - timedelta(hours=1)
 
-    statement = select(Temperature)
+    statement = select(Temperature).limit(20)
     results = session.exec(statement).all()
     return results
 
